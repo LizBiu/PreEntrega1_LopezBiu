@@ -1,16 +1,9 @@
-let boletosDisponibles = {
-    "vip": 5,
-    "golden": 5,
-    "platino": 5,
-    "discapacitado": 4,
-};
-
-const precios = {
-    "vip": 1500,
-    "golden": 1000,
-    "platino": 900,
-    "discapacitado": 400,
-};
+var boletos = [
+    { tipo: "VIP", precio: 1500, disponibilidad: 5 },
+    { tipo: "Golden", precio: 1000, disponibilidad: 10 },
+    { tipo: "platino", precio: 900, disponibilidad: 5 },
+    { tipo: "discapacitado", precio: 400, disponibilidad: 4 },
+];
 
 let boletosComprados = {
     "vip": 0,
@@ -19,7 +12,15 @@ let boletosComprados = {
     "discapacitado": 0,
 };
 
+
 let continuarComprando = true;
+
+var boletosDisponibles = boletos.filter(function(boleto) {
+    return boleto.tipo === "VIP" && boleto.precio <= 100 && boleto.disponibilidad > 0;
+});
+console.log(boletosDisponibles);
+
+
 
 while (continuarComprando) {
     let tipoBoleto = prompt("¿Qué tipo de boleto deseas comprar (VIP, Golden, Platino o Discapacitado)?");
