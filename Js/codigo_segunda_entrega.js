@@ -1,52 +1,62 @@
-let boletosDisponibles = {
-    "vip": 5,
-    "golden": 5,
-    "platino": 5,
-    "discapacitado": 4,
-};
+function obtenerInstanciaMailgun() {
+    const mg = mailgun({
+        apiKey: 'pubkey-a0ec3acbfb1f580dc2a43d65a8050976',
+        domain: 'sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org',
+    });
 
-const precios = {
-    "vip": 1500,
-    "golden": 1000,
-    "platino": 900,
-    "discapacitado": 400,
-};
+    return mg;
+}
 
-let boletosComprados = {
-    "vip": 0,
-    "golden": 0,
-    "platino": 0,
-    "discapacitado": 0,
-};
 
-let continuarComprando = true;
 
-while (continuarComprando) {
-    let tipoBoleto = obtenerTipoBoleto();
+function cargarDatosDesdeJSON() {
+    let data;
 
-    if (tipoBoleto === null) {
-        continuarComprando = false;
-    } else {
-        tipoBoleto = tipoBoleto.toLowerCase();
-
-        if (!esTipoBoletoValido(tipoBoleto)) {
-            mostrarMensajeError("Tipo de boleto no válido. Por favor, elige entre VIP, Golden, Platino o Discapacitado.");
-        } else if (boletosDisponibles[tipoBoleto] === 0) {
-            mostrarMensajeError(`Lo siento, no hay suficientes boletos en la zona ${tipoBoleto} disponibles.`);
-        } else {
-            let cantidad = obtenerCantidadBoletos(tipoBoleto);
-            if (esCantidadValida(cantidad)) {
-                procesarCompra(tipoBoleto, cantidad);
-            } else {
-                mostrarMensajeError("Por favor, introduce una cantidad válida de boletos.");
+    return fetch('informacionBoletos.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud HTTP: ' + response.status);
             }
-        }
-    }
+            return response.json();
+        })
+        .then(responseData => {  
+            data = responseData;  
+            boletosDisponibles = data.informacionBoletos.boletosDisponibles;
+            precios = data.informacionBoletos.precios;
+            boletosComprados = data.informacionBoletos.boletosComprados;
+
+            console.log('Boletos disponibles:', boletosDisponibles);
+            console.log('Precios:', precios);
+            console.log('Boletos comprados:', boletosComprados);
+
+            mg = obtenerInstanciaMailgun();
+        })
+        .catch(error => console.error('Error al cargar el archivo JSON:', error));
 }
 
-function obtenerTipoBoleto() {
-    return prompt("¿Qué tipo de boleto deseas comprar (VIP, Golden, Platino o Discapacitado)?");
-}
+
+cargarDatosDesdeJSON();
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('formularioCompra').addEventListener('submit', function (event) {
+        event.preventDefault(); 
+
+        let nombre = document.getElementById('nombre').value;
+        let email = document.getElementById('email').value;
+
+        enviarInformacion(nombre, email);
+
+        this.reset();
+    });
+
+    document.getElementById('botonEnviar').addEventListener('click', function() {
+        let nombre = document.getElementById('nombre').value;
+        let email = document.getElementById('email').value;
+
+        enviarInformacion(nombre, email);
+        document.getElementById('formularioCompra').submit();
+    });
+});
 
 function esTipoBoletoValido(tipoBoleto) {
     return boletosDisponibles[tipoBoleto] !== undefined;
@@ -54,6 +64,17 @@ function esTipoBoletoValido(tipoBoleto) {
 
 function mostrarMensajeError(mensaje) {
     alert(mensaje);
+}
+
+function comprarBoletos(tipoBoleto) {
+    let cantidad = prompt(`¿Cuántos boletos ${tipoBoleto} deseas comprar?`);
+    cantidad = parseInt(cantidad);
+
+    if (esCantidadValida(cantidad)) {
+        procesarCompra(tipoBoleto, cantidad);
+    } else {
+        mostrarMensajeError("Por favor, introduce una cantidad válida de boletos.");
+    }
 }
 
 function obtenerCantidadBoletos(tipoBoleto) {
@@ -65,77 +86,140 @@ function esCantidadValida(cantidad) {
     return !isNaN(cantidad) && cantidad > 0;
 }
 
-function retornar() {
-    let mensaje = "¡Gracias por tu compra! Esperamos que disfrutes del evento.";
-    console.log(mensaje);
-    return mensaje;
-}
-
-function procesarCompra(tipoBoleto, cantidad) {
-    let cantidadDisponible = boletosDisponibles[tipoBoleto];
-    cantidad = Math.min(cantidad, cantidadDisponible);
-    let fechaCompra = obtenerFechaActual();
-
-    if (cantidad > 0) {
-        boletosDisponibles[tipoBoleto] -= cantidad;
-        boletosComprados[tipoBoleto] += cantidad;
-        let costoTotal = aplicarDescuento(cantidad * precios[tipoBoleto]);
-        mostrarMensajeCompra(`Has comprado ${cantidad} boletos ${tipoBoleto}. Total a pagar= ${costoTotal}`);
-        mostrarMensajeCompra(`Fecha de compra: ${fechaCompra}`);
-        let mensajeRetornado = retornar();
-        console.log(mensajeRetornado);
-    } else {
-        mostrarMensajeError(`Lo siento, no hay suficientes boletos en la zona ${tipoBoleto} disponibles.`);
-    }
-}
 
 function obtenerFechaActual() {
     let fecha = new Date();
     return fecha.toLocaleString();
 }
 
+
 function aplicarDescuento(costo) {
-    // Aplicar descuento del 10% por aniversario
     return costo * 0.9;
 }
 
-function mostrarMensajeCompra(mensaje) {
-    alert(mensaje);
-}
+function procesarCompra(tipoBoleto, cantidad) {
+    if (boletosDisponibles[tipoBoleto] >= cantidad) {
+        boletosComprados[tipoBoleto] += cantidad;
+        boletosDisponibles[tipoBoleto] -= cantidad;
 
-function mostrarResumenCompra() {
-    let boletosTotales = calcularBoletosTotales();
-    if (boletosTotales > 0) {
-        mostrarMensajeCompra(`Gracias por tu compra. Has comprado un total de ${boletosTotales} boletos.`);
+        let costoTotal = aplicarDescuento(cantidad * precios[tipoBoleto]);
+
+        mostrarMensajeCompra(`Has comprado ${cantidad} boletos ${tipoBoleto}. Total a pagar= ${costoTotal}`);
+        mostrarMensajeCompra(`Fecha de compra: ${obtenerFechaActual()}`);
     } else {
-        mostrarMensajeCompra("No se ha realizado ninguna compra.");
+        mostrarMensajeError(`Lo siento, no hay suficientes boletos en la zona ${tipoBoleto} disponibles.`);
     }
 }
 
-function calcularBoletosTotales() {
-    let boletosTotales = 0;
-    for (let tipo in boletosComprados) {
-        boletosTotales += boletosComprados[tipo];
-    }
-    return boletosTotales;
+function mostrarMensajeEnHTML(mensaje) {
+    const mensajeContainer = document.getElementById('mensajeContainer');
+    mensajeContainer.innerHTML += `<p>${mensaje}</p>`;
 }
-
-// Mostrar resumen de compra al finalizar
-document.getElementById('mostrarResumen').addEventListener('click', mostrarResumenCompra);
-document.querySelector('.mostrarResumen').addEventListener('click', mostrarResumenCompra);
 
 
 function mostrarResumenCompra() {
-    let mensajeElement = document.getElementById('mensaje');
-    let boletosTotales = calcularBoletosTotales();
+    let mensaje = "Resumen de la compra:\n\n";
 
-    if (boletosTotales > 0) {
-        mensajeElement.innerText = `Gracias por tu compra. Has comprado un total de ${boletosTotales} boletos.`;
-    } else {
-        mensajeElement.innerText = "No se ha realizado ninguna compra.";
+    for (let tipoBoleto in boletosComprados) {
+        let cantidadComprada = boletosComprados[tipoBoleto];
+
+        if (cantidadComprada > 0) {
+            mensaje += `Boletos ${tipoBoleto}: ${cantidadComprada}\n`;
+        }
     }
+    
+    return mensaje !== "Resumen de la compra:\n\n" ? mensaje : "No se ha realizado ninguna compra.";
 
-    setTimeout(() => {
-        mensajeElement.innerText = "";
-    }, 3000);
 }
+
+
+
+document.getElementById('formularioCompra').addEventListener('submit', function (event) {
+    event.preventDefault(); 
+    
+    let nombre = document.getElementById('nombre').value;
+    let email = document.getElementById('email').value;
+
+    enviarInformacion(nombre, email);
+
+    this.reset();
+});
+
+function enviarCorreo() {
+    const apiUrl = 'https://api.mailgun.net/v3/sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org/messages';
+    const apiKey = '31faa32c55cbfa2b27bae7d04d5fd5ba-0a688b4a-888d2f30';
+    const domain = 'sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org';
+
+    const datos = {
+        from: "Mailgun Sandbox <postmaster@sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org>",
+        to: "lizethlobiu@gmail.com",
+        subject: "Hello",
+        text: "Testing some Mailgun awesomeness!",
+    };
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${btoa(`api:${apiKey}`)}`, // Codifica las credenciales a Base64
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(datos).toString(), // Codifica los datos como formulario URL-encoded
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al enviar el correo');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Correo enviado con éxito:', data);
+        // Puedes agregar más lógica aquí según la respuesta de la API
+    })
+    .catch(error => {
+        console.error('Error al enviar el correo:', error);
+    });
+}
+
+
+function enviarInformacion(nombre, email) {
+    console.log(`Nombre: ${nombre}, Email: ${email}`);
+
+    const cliente = {
+        nombre: nombre,
+        correo: email,
+    };
+
+    const informacionAEnviar = {
+        cliente: {
+            nombre: nombre,
+            correo: email,
+        },
+        compra: {
+            totalPago: mostrarResumenCompra(),
+            fechaCompra: obtenerFechaActual(),
+        },
+        mensaje: "Gracias por tu compra. Esperamos que disfrutes del evento.",
+    };
+    
+
+    const mensajeContainer = document.getElementById('mensajeContainer');
+    mensajeContainer.innerHTML = `<p><strong>Resumen de la compra:</strong></p><p>${informacionAEnviar.compra.totalPago}</p><p>${informacionAEnviar.compra.fechaCompra}</p>`;
+
+    if (mg) {
+        mg.messages.create('sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org', {
+            from: "Mailgun Sandbox <postmaster@sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org>",
+            to: ["lizethlobiu@gmail.com"],
+            subject: "Información del Cliente",
+            text: JSON.stringify(informacionAEnviar),
+        })
+        .then(msg => {
+            console.log('Correo enviado con éxito:', msg);
+        })
+        .catch(err => {
+            console.error('Error al enviar el correo:', err);
+        });
+    } else {
+        console.error('La instancia de Mailgun no está definida. No se pudo enviar el correo.');
+    }
+}
+

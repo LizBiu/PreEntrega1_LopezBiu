@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+h1,h4 {
+    text-align: center;
+}
+
+#mensajeContainer{
+    display: flex;
+}
+
+#columnaImagen {
+    flex: 1;
+}   
+
+/* Estilos generales del formulario */
+#formularioCompra {
+    width: 300px;
+    margin: auto;
+    text-align: center;
+    align-items: center;
+}
+
+#formularioCompra label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#formularioCompra input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+#formularioCompra button {
+    width: 100%;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#formularioCompra button:hover {
+    background-color: #45a049;
+}
+
+#botonesContainer {
+    flex: 1;
+    display: inline-block;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#resumenContainer {
+    text-align: center;
+    border: purple;
+    color: purple;
+}
+
+#discapacitadoBtn {
+    background-color: #003d88;
+    color: white;
+    background: url('../assets/icon_azul_de_Silla_de_ruedas.svg') left center no-repeat,linear-gradient(#003d88, #003d88); 
+    background-size: 30px 30px, auto;
+    padding-left: 40px;
+}
+#vipBtn {
+    border: 2px solid gold; 
+    background-color: black; 
+    color: gold; 
+}
+
+
+#platinoBtn {
+    border: 2px solid silver; 
+    background-color: grey; 
+    color: white; 
+}
+
+#goldenBtn {
+    border: 2px solid gold; 
+    background-color: goldenrod; 
+    color: white; 
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}

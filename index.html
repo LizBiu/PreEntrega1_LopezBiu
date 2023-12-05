@@ -1,4 +1,5 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -8,43 +9,29 @@
     <title>PreEntrega_2_LopezBiu</title>
 </head>
 
-<body>
-    <section class="hotel">
-        <div class="container index">
-            <h1>Por favor elige la zona que desees reservar</h1>
-            Las opciones son
-            <table border="1">
-                <tr>
-                    <td>- VIP</td>
-                    <td>- Orquesta 1</td>
-                    <td>- Preferente VIP</td>
-                    <td>- Preferente 3</td>
-                </tr>
-                <tr>
-                    <td>- Platino</td>
-                    <td>- Orquesta 2</td>
-                    <td>- Preferente 1</td>
-                    <td>- Preferente 4</td>
-                </tr>
-                <tr>
-                    <td>- Golden</td>
-                    <td>- Orquesta 3</td>
-                    <td>- Preferente 2</td>
-                    <td>- Discapacitado</td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <div>
-            <img src="./assets/mapa_teatro.gif" alt="teatro">
-        </div>
+<html lang="en">
 
-    </section>
-    <div id="contenedorResultados"></div>
-    <div id="mensaje"></div>
-    <button id="mostrarResumen">Mostrar Resumen de Compra</button>
-    <p id="mensaje"></p>
-    <p class="mensaje"></p>
+<body>
+    <h1>Compra de Boletos</h1>
+</section>
+    <button onclick="comprarBoletos('vip')">Comprar Boleto VIP</button>
+    <button onclick="comprarBoletos('golden')">Comprar Boleto Golden</button>
+    <button onclick="comprarBoletos('platino')">Comprar Boleto Platino</button>
+    <button onclick="comprarBoletos('discapacitado')">Comprar Boleto Discapacitado</button>
+
+    <button onclick="mostrarResumenCompra()">Mostrar Resumen de Compra</button>
+</section>
+    
+    <section>
+    <form id="formularioCompra">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="button" id="botonEnviar">Enviar Formulario</button>
+
+    </form>
+</section>
 </body>
 
 </html>

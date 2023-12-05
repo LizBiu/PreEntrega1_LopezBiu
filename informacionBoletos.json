@@ -1,0 +1,22 @@
+{
+  "informacionBoletos": {
+      "boletosDisponibles": {
+          "vip": 5,
+          "golden": 5,
+          "platino": 5,
+          "discapacitado": 4
+      },
+      "precios": {
+          "vip": 1500,
+          "golden": 1000,
+          "platino": 900,
+          "discapacitado": 400
+      },
+      "boletosComprados": {
+          "vip": 0,
+          "golden": 0,
+          "platino": 0,
+          "discapacitado": 0
+      }
+  }
+}

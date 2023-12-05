@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "mailgun-js": "^0.22.0",
+    "mailgun.js": "^9.3.0"
+  }
+}
