@@ -10,30 +10,44 @@
 </head>
 
 <body>
-
-
-
     <h1>Compra de Boletos</h1>
     <div id="mensajeContainer">
         <div id="columnaImagen">
             <img src="./assets/mapa_teatro.gif" alt="Ubicación">
         </div>
         <div id="botonesContainer">
-            <button id="vipBtn" onclick="comprarBoletos('vip')">Comprar Boleto VIP</button>
-            <button id="goldenBtn" onclick="comprarBoletos('golden')">Comprar Boleto Golden</button>
-            <button id="platinoBtn" onclick="comprarBoletos('platino')">Comprar Boleto Platino</button>
-            <br><br>
-            <button id="discapacitadoBtn" onclick="comprarBoletos('discapacitado')">Comprar Boleto
-                Discapacitado</button>
-            <br><br><br>
-            <button onclick="mostrarResumenCompra()">Mostrar Resumen de Compra</button>
-
+            <ul id="listaBoletos">
+                <li>
+                    <label for="vip">Boleto VIP</label>
+                    <input type="number" id="vipCantidad" name="vipCantidad" min="0" value="0">
+                    <button id="vipBtn" onclick="seleccionarCantidad('vip')">Comprar Boleto VIP</button>
+                </li>
+                <li>
+                    <label for="golden">Boleto Golden</label>
+                    <input type="number" id="goldenCantidad" name="goldenCantidad" min="0" value="0">
+                    <button id="goldenBtn" onclick="seleccionarCantidad('golden')">Comprar Boleto Golden</button>
+                </li>
+                <li>
+                    <label for="platino">Boleto Platino</label>
+                    <input type="number" id="platinoCantidad" name="platinoCantidad" min="0" value="0">
+                    <button id="platinoBtn" onclick="seleccionarCantidad('platino')">Comprar Boleto Platino</button>
+                </li>
+                <li>
+                    <label for="discapacitado">Boleto Discapacitado</label>
+                    <input type="number" id="discapacitadoCantidad" name="discapacitadoCantidad" min="0" value="0">
+                    <button id="discapacitadoBtn" onclick="seleccionarCantidad('discapacitado')">Comprar
+                        BoletoDiscapacitado</button>
+                </li>
+                <li>
+                    <button onclick="mostrarResumenCompra()">Mostrar Resumen de Compra</button>
+                </li>
+            </ul>
         </div>
-
-
     </div>
 
-
+    <div id="resumen-compra-container">
+        <div id="mensajeContainer"></div>
+    </div>
     <br>
     <br>
 
@@ -44,60 +58,95 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <button type="button" id="botonEnviar">Enviar Formulario</button>
-
     </form>
 
-
     <script>
-        let boletosDisponibles = {
-            "vip": 5,
-            "golden": 5,
-            "platino": 5,
-            "discapacitado": 4,
-        };
-
-        let precios = {
-            "vip": 1500,
-            "golden": 1000,
-            "platino": 900,
-            "discapacitado": 400,
-        };
-
-        let boletosComprados = {
-            "vip": 0,
-            "golden": 0,
-            "platino": 0,
-            "discapacitado": 0,
-        };
-
-        function obtenerInstanciaMailgun() {
-
-        }
+        let enPaginaAgradecimiento = false;
 
         function cargarDatosDesdeJSON() {
             return fetch('informacionBoletos.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la solicitud HTTP: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    boletosDisponibles = data.informacionBoletos.boletosDisponibles;
-                    precios = data.informacionBoletos.precios;
-                    boletosComprados = data.informacionBoletos.boletosComprados;
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud HTTP: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            boletosDisponibles = data.informacionBoletos.boletosDisponibles;
+            precios = data.informacionBoletos.precios;
+            boletosComprados = data.informacionBoletos.boletosComprados;
 
-                    console.log('Boletos disponibles:', boletosDisponibles);
-                    console.log('Precios:', precios);
-                    console.log('Boletos comprados:', boletosComprados);
-                    // mg = obtenerInstanciaMailgun();
-                })
-                .catch(error => console.error('Error al cargar el archivo JSON:', error));
+            console.log('Boletos disponibles:', boletosDisponibles);
+            console.log('Precios:', precios);
+            console.log('Boletos comprados:', boletosComprados);
+        })
+        .catch(error => console.error('Error al cargar el archivo JSON:', error));
         }
 
-        cargarDatosDesdeJSON();
+        function ocultarBotonesCompra() {
+            const botonesCompra = document.querySelectorAll('button[id$="Btn"]');
+            botonesCompra.forEach(boton => {
+                boton.style.display = 'none';
+            });
+        }
+
+        function desactivarFuncionesCompra() {
+            window.comprarBoletos = function () {
+                alert('Las compras están desactivadas en la página de agradecimiento.');
+            };
+
+            window.procesarCompra = function () {
+                alert('El procesamiento de compras está desactivado en la página de agradecimiento.');
+            };
+
+            window.mostrarMensajeError = function (mensaje) {
+                alert(mensaje);
+            };
+        }
+
+        function esTipoBoletoValido(tipoBoleto) {
+            return boletosDisponibles[tipoBoleto] !== undefined;
+        }
+
+        function seleccionarCantidad(tipoBoleto) {
+            // ... (resto de tu función seleccionarCantidad) ...
+        }
+
+        window.seleccionarCantidad = function (tipoBoleto) {
+            // ... (resto de tu función seleccionarCantidad) ...
+        };
+
+        function mostrarMensajeError(mensaje) {
+            // ... (resto de tu función mostrarMensajeError) ...
+        }
+
+        function esCantidadValida(cantidad) {
+            // ... (resto de tu función esCantidadValida) ...
+        }
+
+        function obtenerFechaActual() {
+            // ... (resto de tu función obtenerFechaActual) ...
+        }
+
+        function aplicarDescuento(costo) {
+            // ... (resto de tu función aplicarDescuento) ...
+        }
+
+        function procesarCompra(tipoBoleto, cantidad) {
+            // ... (resto de tu función procesarCompra) ...
+        }
+
+        function mostrarResumenCompra() {
+            // ... (resto de tu función mostrarResumenCompra) ...
+        }
+
+        function mostrarResumenEnHTML(mensaje) {
+            // ... (resto de tu función mostrarResumenEnHTML) ...
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
+            cargarDatosDesdeJSON();
+
             document.getElementById('formularioCompra').addEventListener('submit', function (event) {
                 event.preventDefault();
 
@@ -107,6 +156,19 @@
                 enviarInformacion(nombre, email);
 
                 this.reset();
+
+                const camposCantidad = document.querySelectorAll('input[type="number"]');
+                camposCantidad.forEach(campo => {
+                    campo.value = 0;
+                });
+
+                // Aquí es donde se deben ocultar los botones en la página de agradecimiento
+                if (enPaginaAgradecimiento) {
+                    ocultarBotonesCompra();
+                    desactivarFuncionesCompra();
+                }
+
+                enPaginaAgradecimiento = true;
             });
 
             document.getElementById('botonEnviar').addEventListener('click', function () {
@@ -116,175 +178,17 @@
                 enviarInformacion(nombre, email);
                 document.getElementById('formularioCompra').submit();
             });
+
+            // Aquí es donde se deben ocultar los botones en la página de agradecimiento
+            if (enPaginaAgradecimiento) {
+                ocultarBotonesCompra();
+                desactivarFuncionesCompra();
+            }
+            enPaginaAgradecimiento = true;
         });
 
-        let mg;
-
-        function comprarBoletos(tipoBoleto) {
-            let cantidad = prompt(`¿Cuántos boletos ${tipoBoleto} deseas comprar?`);
-            cantidad = parseInt(cantidad);
-
-            if (esCantidadValida(cantidad)) {
-                procesarCompra(tipoBoleto, cantidad);
-            } else {
-                mostrarMensajeError("Por favor, introduce una cantidad válida de boletos.");
-            }
-        }
-
-        function esTipoBoletoValido(tipoBoleto) {
-            return boletosDisponibles[tipoBoleto] !== undefined;
-        }
-
-        function mostrarMensajeError(mensaje) {
-            document.getElementById('mensajeContainer').innerHTML = `<p style="color: red;">${mensaje}</p>`;
-        }
-
-        function comprarBoletos(tipoBoleto) {
-            let cantidad = prompt(`¿Cuántos boletos ${tipoBoleto} deseas comprar?`);
-            cantidad = parseInt(cantidad);
-
-            if (esCantidadValida(cantidad)) {
-                procesarCompra(tipoBoleto, cantidad);
-            } else {
-                mostrarMensajeError("Por favor, introduce una cantidad válida de boletos.");
-            }
-        }
-
-        function obtenerCantidadBoletos(tipoBoleto) {
-            let cantidad = prompt(`¿Cuántos boletos ${tipoBoleto} deseas comprar?`);
-            return parseInt(cantidad);
-        }
-
-        function esCantidadValida(cantidad) {
-            return !isNaN(cantidad) && cantidad > 0;
-        }
-
-        function mostrarMensajeCompra(mensaje) {
-
-            document.getElementById('mensajeContainer').innerHTML = `<p style="color: green;">${mensaje}</p>`;
-        }
-
-        function obtenerFechaActual() {
-            let fecha = new Date();
-            return fecha.toLocaleString();
-        }
-
-        function aplicarDescuento(costo) {
-            return costo * 0.9;
-        }
-
-        function procesarCompra(tipoBoleto, cantidad) {
-            if (boletosDisponibles[tipoBoleto] >= cantidad) {
-                boletosComprados[tipoBoleto] += cantidad;
-                boletosDisponibles[tipoBoleto] -= cantidad;
-
-                let costoTotal = aplicarDescuento(cantidad * precios[tipoBoleto]);
-
-                mostrarMensajeCompra(`Has comprado ${cantidad} boletos ${tipoBoleto}. Total a pagar= ${costoTotal}`);
-                mostrarMensajeCompra(`Fecha de compra: ${obtenerFechaActual()}`);
-            } else {
-                mostrarMensajeError(`Lo siento, no hay suficientes boletos en la zona ${tipoBoleto} disponibles.`);
-            }
-        }
-
-        function mostrarResumenCompra() {
-            let mensaje = "Resumen de la compra:\n\n";
-
-            for (let tipoBoleto in boletosComprados) {
-                let cantidadComprada = boletosComprados[tipoBoleto];
-
-                if (cantidadComprada > 0) {
-                    mensaje += `Boletos ${tipoBoleto}: ${cantidadComprada}\n`;
-                }
-            }
-
-            if (mensaje === "Resumen de la compra:\n\n") {
-                mensaje += "No se ha realizado ninguna compra.";
-            }
-
-            document.getElementById('mensajeContainer').innerHTML = `<p>${mensaje}</p>`;
-        }
-
-        document.getElementById('formularioCompra').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            let nombre = document.getElementById('nombre').value;
-            let email = document.getElementById('email').value;
-
-            enviarInformacion(nombre, email);
-
-            this.reset();
-        });
-
-        function enviarCorreo() {
-            const apiUrl = 'https://api.mailgun.net/v3/sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org/messages';
-            const apiKey = '31faa32c55cbfa2b27bae7d04d5fd5ba-0a688b4a-888d2f30';
-            const domain = 'sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org';
-
-            const datos = {
-                from: "Mailgun Sandbox <postmaster@sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org>",
-                to: "lizethlobiu@gmail.com",
-                subject: "Hello",
-                text: "Testing some Mailgun awesomeness!",
-            };
-
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Basic ${btoa(`api:${apiKey}`)}`, // Codifica las credenciales a Base64
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams(datos).toString(), // Codifica los datos como formulario URL-encoded
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al enviar el correo');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Correo enviado con éxito:', data);
-                })
-                .catch(error => {
-                    console.error('Error al enviar el correo:', error);
-                });
-        }
-
-        function enviarInformacion(nombre, email) {
-            console.log(`Nombre: ${nombre}, Email: ${email}`);
-
-            const informacionAEnviar = {
-                cliente: {
-                    nombre: nombre,
-                    correo: email,
-                },
-                compra: {
-                    totalPago: mostrarResumenCompra(),
-                    fechaCompra: obtenerFechaActual(),
-                },
-                mensaje: "Gracias por tu compra. Esperamos que disfrutes del evento.",
-            };
-
-            // Si mg está definido, utiliza mg para enviar el correo
-            if (mg) {
-                mg.messages.create('sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org', {
-                    from: "Mailgun Sandbox <postmaster@sandboxd8d81ed30e7848f58295512c3bbb0bfc.mailgun.org>",
-                    to: ["lizethlobiu@gmail.com"],
-                    subject: "Información del Cliente",
-                    text: JSON.stringify(informacionAEnviar),
-                })
-                    .then(msg => {
-                        console.log('Correo enviado con éxito:', msg);
-                    })
-                    .catch(err => {
-                        console.error('Error al enviar el correo:', err);
-                    });
-            } else {
-                console.error('La instancia de Mailgun no está definida. No se pudo enviar el correo.');
-            }
-        }
+        // ... (resto de tu código JavaScript) ...
     </script>
-
 </body>
 
 </html>

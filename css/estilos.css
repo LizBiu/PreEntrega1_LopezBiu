@@ -5,6 +5,68 @@ body {
     height: 100vh;
     margin: 0;
 }
+
+#listaBoletos {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+#listaBoletos li {
+    margin-bottom: 10px;
+}
+
+#listaBoletos label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#listaBoletos input {
+    width: 80px;
+    padding: 8px;
+    margin-right: 5px;
+    box-sizing: border-box;
+}
+
+#listaBoletos button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#listaBoletos button:hover {
+    background-color: #45a049;
+}
+
+#listaBoletos button#discapacitadoBtn {
+    background: url('../assets/icon_azul_de_Silla_de_ruedas.svg') left center no-repeat, linear-gradient(#003d88, #003d88);
+    background-size: 30px 30px, auto;
+    padding-left: 40px;
+    background-color: #003d88;
+    color: white;
+}
+
+#listaBoletos button#vipBtn {
+    border: 2px solid gold;
+    background-color: black;
+    color: gold;
+}
+
+#listaBoletos button#platinoBtn {
+    border: 2px solid silver;
+    background-color: grey;
+    color: white;
+}
+
+#listaBoletos button#goldenBtn {
+    border: 2px solid gold;
+    background-color: goldenrod;
+    color: white;
+}
+
 h1,h4 {
     text-align: center;
 }
@@ -45,6 +107,9 @@ h1,h4 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+.centrado {
+    text-align: center;
 }
 
 #formularioCompra button:hover {
